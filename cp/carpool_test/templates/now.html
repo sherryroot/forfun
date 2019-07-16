@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <!-- baidu -->
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";font-size:14px;}
+		#l-map{height:300px;width:100%;}
+		#r-result{width:100%;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=AH9VWKHdAY2DPEAcu6GfbHuynT4Tw2Ke"></script>
+    <!-- baidu -->
+
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <title>订车信息</title>
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/red-color.css' %}">
+    <link rel="stylesheet" href="{% static 'css/yellow-color.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+</head>
+<body itemscope>
+    <main>
+		<section>
+            <div class="block gray-bg">
+				<div class="top-mockup"><img src="{% static 'images/resource/mockup2.png' %}" alt=""></div>
+                <div class="container">
+                    <div class="row">
+						<div class="col-md-5 col-sm-5">
+							<div class="booking-form-sec wow fadeIn" data-wow-delay="0.2s">
+								<div class="fit-bg" style="background-image: url({% static 'images/resource/booking-frombg.jpg' %})"></div>
+								<div class="form-meta">
+									<h2>您将预定{{back.time}}时间</h2>
+									<span>请确认去往方向是{{back.dir}}！</span>
+<!-- 提交表格-->
+									<form method="post" action='now/'>
+                                        {% csrf_token %}
+										 <input type="text"  placeholder="姓名" name='user'/>
+										<input type="text"  placeholder="电话" name='tel'/>
+                    <input type="text"  placeholder="乘车人数" name='num'/>
+                                    
+            
+                     <!-- baidu -->
+                     <div id="r-result">
+                        <input type="text" 
+                        placeholder="上车地点"id="suggestId"size="40"  
+                        style="width:300px;" name='addr'/></div>
+                        	<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:300px;height:50px; display:none;"></div>
+                     <!-- baidu -->
+                                        <span>
+                                        <!--时间段下拉菜单 -->
+                                        <select id="t1" name='time_p'></select>
+                                        </span>
+                                        <!--具体时间下拉菜单-->
+                                       <span>
+                                        <select id="sub"  name='time'></select>   
+                                      </span>
+
+					            <input name="to_where" type="hidden" value="{{back.dir}}">
+										<button type="submit">现在提交</button>
+									</form>
+<!-- 提交表格-->
+								</div>
+							</div>
+						</div>
+						<div class="col-md-7 col-sm-7">
+							<div class="upcoming-event">
+								<div class="title1-wrapper">
+									<i><img alt="" src="{% static 'images/resource/icon.png' %}"></i>
+									<div class="title1-inner">
+										<span>最便捷的拼车服务</span>
+										<h2 itemprop="headline">抵达青阳！</h2>
+										<b>即可预订，开启行程</b>
+									</div>
+								</div>
+								<div class="article-data">
+
+										<p>
+										<!-- baidu -->
+                    	<div id="l-map"></div>
+                     
+                    <!-- baidu -->
+										</p>
+
+								</div>
+
+							</div>
+						</div>
+					</div>	
+				</div>
+				<div class="bottom-mockup"><img src="{% static 'images/resource/mockup1.png' %}" alt=""></div>
+            </div>
+        </section>
+
+
+    </main>
+{% include 'footer.html' %}
+</body>	
+</html>
+<!-- -------------------------------script------------------------------------ -->
+<script type="text/javascript">
+ 
+        var data = [
+        {
+            p: "上午",
+            c: ["6：00" ,"6：30" , "7：00" , "7：30", "8：00","8：30","9：00","9：30","10：00", "10：30","11：00","11：30","12：00"]
+        },
+        {
+            p: "下午",
+            c: ["12：30" ,"13：00" , "13：30" , "14：00", "14：30","15：00","15：30","16：00","16：30", "17：00","17：30","18：00","18：30"]
+        },
+        {
+            p: "晚上",
+            c: ["19：00" ,"19：30" , "20：00", "20：30","21：00","21：30","22：00"]
+        }
+        ]
+ 
+        var main = document.getElementById("t1");
+        var sub = document.getElementById("sub");
+ 
+        for (var i = 0; i < data.length; i++) {
+            var opt = document.createElement("option");
+            opt.value = data[i].p;
+            opt.label = data[i].p;
+            opt.innerText = i;
+            main.options.add(opt);
+        }
+ 
+        main.onchange = MainChange;
+ 
+        function MainChange() {
+            var index = parseInt(main[main.selectedIndex].innerText);
+            var c = data[index].c;
+            
+            sub.options.length = 0;
+            for (var i = 0; i < c.length; i++) {
+                var opt = document.createElement("option");
+                opt.value = c[i];
+                opt.innerText = c[i];
+                sub.options.add(opt);
+            }
+        }
+ 
+        main.selectedIndex = 0;
+        MainChange();
+     
+    </script>
+ 
+
+
+
+<script type="text/javascript">
+	// 百度地图API功能
+	function G(id) {
+		return document.getElementById(id);
+	}
+
+	var map = new BMap.Map("l-map");
+	map.centerAndZoom("北京",12);                   // 初始化地图,设置城市和地图级别。
+
+	var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+		{"input" : "suggestId"
+		,"location" : map
+	});
+
+	ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+	var str = "";
+		var _value = e.fromitem.value;
+		var value = "";
+		if (e.fromitem.index > -1) {
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+		
+		value = "";
+		if (e.toitem.index > -1) {
+			_value = e.toitem.value;
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+		G("searchResultPanel").innerHTML = str;
+	});
+
+	var myValue;
+	ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+	var _value = e.item.value;
+		myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+		
+		setPlace();
+	});
+
+	function setPlace(){
+		map.clearOverlays();    //清除地图上所有覆盖物
+		function myFun(){
+			var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+			map.centerAndZoom(pp, 18);
+			map.addOverlay(new BMap.Marker(pp));    //添加标注
+		}
+		var local = new BMap.LocalSearch(map, { //智能搜索
+		  onSearchComplete: myFun
+		});
+		local.search(myValue);
+	}
+</script>
